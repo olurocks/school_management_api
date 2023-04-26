@@ -8,6 +8,7 @@ async function registerUser(userData) {
             id: userData.id,
             name: userData.name,
             email: userData.email,
+            role: userData.role,
             password: hashedPassword,
         })
         return user;

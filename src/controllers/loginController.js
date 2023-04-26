@@ -25,7 +25,10 @@ async function login(req, res) {
                 email: email
             }
         })
-        if (!user || ! (await bcrypt.compare(password, user.password))){
+        if (!user) {
+            throw new Error('user does not exist please use a valid email or signup')
+        }
+        else if (!user || ! (await bcrypt.compare(password, user.password))){
             throw new Error('incorrect password or pin')
         }
 
@@ -34,7 +37,7 @@ async function login(req, res) {
         const isTeacher = email.endsWith('@teach.edu.ng');
 
         if (!isStudent && !isTeacher) {
-            throw new Error({ message: 'Invalid email' });
+            throw new Error({ message: 'Invalid email format' });
         }
 
         // Set user role based on email
@@ -45,7 +48,8 @@ async function login(req, res) {
 
 
         // Generate JWT for the user
-        const token = auth.generateToken(user.toJSON())
+        console.log(user)
+        const token = auth.generateToken(user)
         console.log(token)
         res.json("sign in successful")
     } catch (error){
