@@ -4,7 +4,7 @@ const { hashPassword } = require("./authUtils")
 async function registerUser(userData) {
     try {
         const hashedPassword = await hashPassword(userData.password)
-        const user = new User({
+        const user =  User.create({
             id: userData.id,
             name: userData.name,
             email: userData.email,

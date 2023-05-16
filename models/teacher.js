@@ -4,12 +4,17 @@ const database = require("../database/db")
 
 const sequelize = database.sequelize
 
-const User = sequelize.define('User', {
+const Class = require("./class")
+const Subject = require('./subject')
+
+const classTeacher = require('./classTeacher')
+
+const Teacher = sequelize.define('Teacher', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         allowNull: false,
-        primaryKey: true,
+        primaryKey: true
     },
     email: {
         type: DataTypes.STRING,
@@ -26,14 +31,27 @@ const User = sequelize.define('User', {
         allowNull: true
     },
     role: {
-        type: DataTypes.ENUM('student', 'teacher'),
+        type: DataTypes.ENUM('teacher'),
         allowNull: false
-    }, 
+    },
+    user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'users',
+            key: 'id',
+        },
+    },
 }, {
-    tableName: "users",
+    tableName: "teachers",
     timestamps: false
 }
 );
+
+
+Teacher.belongsTo(Subject)
+Subject.hasMany(Teacher)
+
 
 sequelize.sync()
     .then(() => {
@@ -43,4 +61,5 @@ sequelize.sync()
         console.error('Error creating table and columns:', error);
     });
 
-module.exports = sequelize.models.User;
+
+module.exports = Teacher;

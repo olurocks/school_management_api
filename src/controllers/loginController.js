@@ -48,11 +48,12 @@ async function login(req, res) {
 
 
         // Generate JWT for the user
-        console.log(user)
+        // console.log(user)
         const token = auth.generateToken(user)
         console.log(token)
         res.json("sign in successful")
     } catch (error){
+        console.log(error)
         res.status(401).send(error.message);
     }
 }

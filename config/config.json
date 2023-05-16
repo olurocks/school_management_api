@@ -1,0 +1,25 @@
+{
+  "development": {
+    "username": "psychval",
+    "password": "dbsecret",
+    "database": "sch_management",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+
+  "test": {
+    "username": "psychval",
+    "password": "dbsecret",
+    "database": "sch_management",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+
+  "production": {
+    "username": "psychval",
+    "password": "dbsecret",
+    "database": "sch_management",
+    "host": "localhost",
+    "dialect": "mysql"
+  }
+}

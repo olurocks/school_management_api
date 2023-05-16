@@ -4,12 +4,15 @@ const database = require("../database/db")
 
 const sequelize = database.sequelize
 
-const User = sequelize.define('User', {
+const Class = require("./class")
+
+
+const Student = sequelize.define('Student', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         allowNull: false,
-        primaryKey: true,
+        primaryKey: true
     },
     email: {
         type: DataTypes.STRING,
@@ -26,21 +29,24 @@ const User = sequelize.define('User', {
         allowNull: true
     },
     role: {
-        type: DataTypes.ENUM('student', 'teacher'),
+        type: DataTypes.ENUM('student'),
         allowNull: false
-    }, 
+    },
+    user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'users',
+            key: 'id',
+        },
+    },
 }, {
-    tableName: "users",
+    tableName: "students",
     timestamps: false
 }
 );
 
-sequelize.sync()
-    .then(() => {
-        console.log('Table and columns created successfully');
-    })
-    .catch((error) => {
-        console.error('Error creating table and columns:', error);
-    });
 
-module.exports = sequelize.models.User;
+// Student.belongsTo(Class, { foreignKey: 'class_id' });
+
+module.exports = Student;

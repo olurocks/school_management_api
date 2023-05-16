@@ -8,7 +8,7 @@ const express = require('express')
 require("dotenv").config({ path: "./.env" })
 
 function generateToken(user) {
-    const token = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+    const token = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' })
       return token
 }
 
@@ -22,6 +22,8 @@ function verifyToken(req, res, next) {
                 return res.sendStatus(403);
             }
             req.decoded = decoded
+
+            console.log(`decoded is ${decoded}`)
             // req.user = user ;
             next();
         }

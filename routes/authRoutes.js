@@ -20,13 +20,61 @@ router.post("/signup",validateUser, async(req,res) =>{
     try {
         await register(req,res)
     } catch (error) {
-        console.log(error)
+        // console.log(error)
     }
 })
 
+const Student = require('../models/student');
+const Class = require('../models/class');
+const Subject = require('../models/subject');
+const Teacher = require('../models/teacher');
+
+// GET student details
+router.get('/details', auth.verifyToken, async (req, res) => {
+    try {
+        console.log(req.decoded.user.id)
+        const student = await Student.findOne({
+            where: { user_id: req.decoded.user.id },
+            include: [
+                {
+                    model: Class,
+                    include: [
+                        {
+                            model: Subject,
+                            include: [
+                                {
+                                    model: Teacher,
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        });
+        if (!student) {
+            return res.status(404).send('Student not found');
+        }
+        res.json(student);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
 router.get("/dashboard",auth.verifyToken, async(req,res)=>{
     const sch_member = req.decoded.user
-    console.log(sch_member)
+    // console.log(sch_member)
     const user_role = sch_member.role
     console.log(user_role)
 
@@ -34,7 +82,6 @@ router.get("/dashboard",auth.verifyToken, async(req,res)=>{
     const user = await User.findOne({where:{
         role: user_role
     }})
-    console.log(user)
     if(!user) {
         return(res.status(404).send("user not found"));
     }
