@@ -6,6 +6,9 @@ const { register } = require("../src/controllers/signupController")
 const { login } = require("../src/controllers/loginController")
 const User = require("../models/user")
 const validateUser = require('../src/utils/validations/signupValidation')
+const {getUserDetails} = require ('../src/controllers/getDetailsController')
+
+require('../models/associations')
 
 router.post("/login", async(req,res)=>{
     try {
@@ -24,37 +27,10 @@ router.post("/signup",validateUser, async(req,res) =>{
     }
 })
 
-const Student = require('../models/student');
-const Class = require('../models/class');
-const Subject = require('../models/subject');
-const Teacher = require('../models/teacher');
-
 // GET student details
 router.get('/details', auth.verifyToken, async (req, res) => {
     try {
-        console.log(req.decoded.user.id)
-        const student = await Student.findOne({
-            where: { user_id: req.decoded.user.id },
-            include: [
-                {
-                    model: Class,
-                    include: [
-                        {
-                            model: Subject,
-                            include: [
-                                {
-                                    model: Teacher,
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        });
-        if (!student) {
-            return res.status(404).send('Student not found');
-        }
-        res.json(student);
+        await getUserDetails(req,res)
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');

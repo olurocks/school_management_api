@@ -1,13 +1,8 @@
 const { Sequelize, DataTypes } = require('sequelize');
-// const sequelize = new Sequelize('sqlite::memory:');
 const database = require("../database/db")
 
 const sequelize = database.sequelize
-
-const Class = require("./class")
-const Subject = require('./subject')
-
-const classTeacher = require('./classTeacher')
+const Subject = require('./subject');
 
 const Teacher = sequelize.define('Teacher', {
     id: {
@@ -34,32 +29,49 @@ const Teacher = sequelize.define('Teacher', {
         type: DataTypes.ENUM('teacher'),
         allowNull: false
     },
-    user_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'users',
-            key: 'id',
-        },
+    category: {
+        type: DataTypes.ENUM('sciences', 'arts', 'commercial', 'technology', 'general'),
+        allowNull: false
     },
-}, {
+    // classes: {
+    //     type: DataTypes.ARRAY(DataTypes.STRING),
+    //     allowNull: false,
+    //     defaultValue: []
+    // }
+    
+    },
+{
     tableName: "teachers",
     timestamps: false
 }
 );
 
+// sequelize.sync().then(
+//     () => {
+//         console.log("Teacher Database and tables are synchronized")
+//     }
+// ).catch((err) => {
+//     console.error("error synchronizing Teacher Database and Tables ")
+// })
 
-Teacher.belongsTo(Subject)
-Subject.hasMany(Teacher)
+// async () => {
+//     await Teacher.sync({ alter: true })
+// }
+// (async () => {
+//     try {
+//         await Teacher.sync({ alter: true });
+//         console.log("Teacher Database and tables are synchronized");
+//     } catch (err) {
+//         console.error("Error synchronizing Teacher Database and Tables:", err);
+//     }
+// })();
 
-
-sequelize.sync()
-    .then(() => {
-        console.log('Table and columns created successfully');
-    })
-    .catch((error) => {
-        console.error('Error creating table and columns:', error);
-    });
-
+sequelize.sync().then(
+    () => {
+        console.log("Teacher Database and tables are synchronized")
+    }
+).catch((err) => {
+    console.error("error synchronizing Database and Tables ")
+})
 
 module.exports = Teacher;

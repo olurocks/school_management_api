@@ -4,7 +4,6 @@ const dotenv = require("dotenv")
 const express = require("express")
 const auth = require("../authJwt")
 const app = express()
-const { validateUser } = require("../utils/validations//loginValidation")
 
 dotenv.config({path: './.env'})
 app.use(express.json())
@@ -19,7 +18,7 @@ async function login(req, res) {
         }
         //validate user input
         // await validateUser(req, res, () => {})
-        //find user in the database
+        //find user in the database00000000000000000000000000000000000000000000000000000000000
         const user = await User.findOne({
             where: {
                 email: email
@@ -46,12 +45,9 @@ async function login(req, res) {
         // Attach role to request object
         req.role = role;
 
-
         // Generate JWT for the user
-        // console.log(user)
         const token = auth.generateToken(user)
-        console.log(token)
-        res.json("sign in successful")
+        res.json(`sign in successful, token is : ${token}`)
     } catch (error){
         console.log(error)
         res.status(401).send(error.message);

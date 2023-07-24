@@ -4,7 +4,8 @@ const database = require("../database/db")
 
 const sequelize = database.sequelize
 
-const Class = require("./class")
+const Class = require("./class");
+const Subject = require('./subject');
 
 
 const Student = sequelize.define('Student', {
@@ -24,6 +25,11 @@ const Student = sequelize.define('Student', {
         allowNull: false,
         unique: true
     },
+    class: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
     password: {
         type: DataTypes.STRING,
         allowNull: true
@@ -32,21 +38,15 @@ const Student = sequelize.define('Student', {
         type: DataTypes.ENUM('student'),
         allowNull: false
     },
-    user_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'users',
-            key: 'id',
-        },
-    },
+    category: {
+        type: DataTypes.ENUM('sciences', 'arts', 'commercial', 'technology', 'general'),
+        allowNull: false
+    }
 }, {
     tableName: "students",
-    timestamps: false
+    timestamps: false,
 }
 );
 
-
-// Student.belongsTo(Class, { foreignKey: 'class_id' });
 
 module.exports = Student;

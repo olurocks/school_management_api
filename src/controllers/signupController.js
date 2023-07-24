@@ -5,7 +5,7 @@ const auth = require("../authJwt")
 const database = require("../../database/db")
 const sequelize = database.sequelize
 
-const Classes = require('../../models/class');
+const Class = require('../../models/class');
 const Student = require('../../models/student')
 const Teacher = require('../../models/teacher')
 const Subject = require('../../models/subject')
@@ -67,38 +67,84 @@ async function register(req, res) {
     try {
         await sequelize.transaction(async (t) => {
             const emailDomain = userData.email.split('@')[1];
-            if (emailDomain === 'stu.edu.ng') {
+            if (emailDomain.toLowerCase() === 'stu.edu.ng') {
                 userData.role = 'student';
+                const studentClass = await Class.findOne({
+                    where: {name: userData.class},
+                    attributes: ['category']
+                })
+
+                const studentData = {
+                    name: userData.name,
+                    email: userData.email,
+                    role: userData.role,
+                    class: userData.class,
+                    category: studentClass.category
+                    // add any other relevant fields specific to the student model
+                };
+                await Student.create(studentData, { transaction: t });
             } else if (emailDomain === 'teach.edu.ng') {
                 userData.role = 'teacher';
+                const teacherClasses= await Class.findAll({
+                    where: {category: userData.category},
+                    attributes: ['name']
+                })
+
+                const teacherData = {
+                    name: userData.name,
+                    email: userData.email,
+                    role: userData.role,
+                    category: userData.category
+                }
+                await Teacher.create(teacherData, {transaction: t})
             } else {
                 throw new Error('Invalid email address');
             }
 
             // const hashedPassword = await hashPassword(userData.password);
             // userData.password = hashedPassword;
+            // if (userData.role === 'student') {
+            //     let category;
+            //     switch(userData.class){
+            //         case 'Patience':
+            //             category = 'sciences'
+            //             break;
+            //         case 'Kindness':
+            //             category = 'sciences'
+            //             break;
+            //         case 'Peace':
+            //             category = 'sciences'
+            //             break;
+            //         case 'Faith':
+            //             category = 'technology'
+            //             break;
+            //         case 'Goodness':
+            //             category = 'arts'
+            //             break;
+            //         case 'Joy':
+            //             category = 'arts'
+            //             break;
+            //         case 'Meekness':
+            //             category = 'commercial'
+            //             break;
+            //         case 'Love':
+            //             category = 'commercial'
+            //             break;
+            //     }
+                
+            // } else if (userData.role === 'teacher') {
+            //     const teacherData = {
+            //         name: userData.name,
+            //         email: userData.email,
+            //         role: userData.role,
+            //         category: userData.category
+            //         // add any other relevant fields specific to the teacher model
+            //     };
+            //     await Teacher.create(teacherData, { transaction: t });
+            // }
 
             const user = await registerUser(userData, { transaction: t });
 
-            if (userData.role === 'student') {
-                const studentData = {
-                    user_id: user.id,
-                    name: userData.name,
-                    email: userData.email,
-                    role: userData.role
-                    // add any other relevant fields specific to the student model
-                };
-                await Student.create(studentData, { transaction: t });
-            } else if (userData.role === 'teacher') {
-                const teacherData = {
-                    user_id: user.id,
-                    name: userData.name,
-                    email: userData.email,
-                    role: userData.role,
-                    // add any other relevant fields specific to the teacher model
-                };
-                await Teacher.create(teacherData, { transaction: t });
-            }
         });
 
         res.status(201).send('Sign-up successful');

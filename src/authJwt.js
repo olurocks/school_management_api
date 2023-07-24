@@ -22,10 +22,10 @@ function verifyToken(req, res, next) {
                 return res.sendStatus(403);
             }
             req.decoded = decoded
-
-            console.log(`decoded is ${decoded}`)
+            
+            return next()
             // req.user = user ;
-            next();
+            ;
         }
         );
     } else {

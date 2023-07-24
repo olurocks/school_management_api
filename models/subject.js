@@ -3,8 +3,6 @@ const { Sequelize, DataTypes } = require('sequelize')
 const database = require('../database/db')
 const sequelize = database.sequelize
 
-const Class = require("./class")
-const ClassSubject = require("./classSubject")
 
 const Subject = sequelize.define('Subject', {
     id: {
@@ -16,21 +14,20 @@ const Subject = sequelize.define('Subject', {
     name: {
         type: DataTypes.STRING,
         allowNull: false,
+    },
+    category: {
+        type: DataTypes.ENUM('sciences','arts', 'commercial', 'technology','general'),
+        allowNull: false
     }
 }, {
-    tableName: "subjects",
+    tableName: "Subjects",
     timestamps: false
 })
 
-Subject.associate = function (models) {
-    Subject.belongsToMany(models.Class, { through: ClassSubject })
+
+async () => {
+    await Subject.sync({ alter: true })
 }
 
-sequelize.sync()
-    .then(() => {
-        console.log('Table and columns created successfully');
-    })
-    .catch((error) => {
-        console.error('Error creating table and columns:', error);
-    });
+
 module.exports = Subject

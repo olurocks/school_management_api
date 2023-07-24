@@ -35,12 +35,7 @@ const User = sequelize.define('User', {
 }
 );
 
-sequelize.sync()
-    .then(() => {
-        console.log('Table and columns created successfully');
-    })
-    .catch((error) => {
-        console.error('Error creating table and columns:', error);
-    });
-
+async() => {
+    await User.sync({ alter: true })
+}
 module.exports = sequelize.models.User;
